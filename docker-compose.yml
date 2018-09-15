@@ -1,0 +1,29 @@
+version: '3'
+services: 
+  db: 
+    container_name: chatbot_db
+    image: mysql:5.7
+    restart: always
+    ports: 
+      - "3306:3306"  
+    environment: 
+      - MYSQL_ROOT_PASSWORD=iii
+    volumes: 
+      - ./mysql_data:/var/lib/mysql
+      - ./mysql_init:/docker-entrypoint-initdb.d/
+  jupyter-tutorial:
+    image: asoo571314/jupyter-notebook:1.0
+    container_name: jupyter_notebook
+    user: root
+    environment:
+      - GRANT_SUDO=yes
+    ports:
+      - "8888:8888"
+      - "5000:5000"
+    depends_on:
+      - db
+    links:
+      - db
+    volumes:
+      - ./code:/home/jovyan/work/
+    command: python /home/jovyan/work/code.py
